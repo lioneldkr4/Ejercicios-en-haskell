@@ -1,0 +1,45 @@
+score :: [Int] -> Int
+score rolls = go 1 rolls 0
+  where
+    go _ [] total = total
+    go frame (x:y:z:rest)
+      | x == 10 = go (frame + 1) (y:z:rest) (total + 10 + y + z)
+      | x + y == 10 = go (frame + 1) (z:rest) (total + 10 + z)
+      | otherwise = go (frame + 1) rest (total + x + y)
+    go _ _ total = total
+
+fizzBuzz :: Int -> String
+fizzBuzz n
+    | n `mod` 15 == 0 = "FizzBuzz"
+    | n `mod` 3 == 0 = "Fizz"
+    | n `mod` 5 == 0 = "Buzz"
+    | otherwise = show n
+
+fizzBuzzList :: [String]
+fizzBuzzList = map fizzBuzz [1..100]
+
+
+import Test.HUnit
+
+testScore :: Test
+testScore = test
+  [ "Test juego vacío" ~: score [] ~?= 0
+  , "Test todos unos" ~: score (replicate 20 1) ~?= 20
+  , "Test todos dieces" ~: score (replicate 12 10) ~?= 300
+  , "Test juego de ejemplo" ~: score [10, 9, 1, 5, 5, 7, 2, 10, 10, 10, 9, 0, 8, 2, 9, 1, 10] ~?= 187
+  -- Agrega más pruebas según sea necesario
+  ]
+
+testFizzBuzz :: Test
+testFizzBuzz = test
+  [ "Test múltiplo de 3" ~: fizzBuzz 3 ~?= "Fizz"
+  , "Test múltiplo de 5" ~: fizzBuzz 5 ~?= "Buzz"
+  , "Test múltiplo de 15" ~: fizzBuzz 15 ~?= "FizzBuzz"
+  , "Test número normal" ~: fizzBuzz 2 ~?= "2"
+  -- Agrega más pruebas según sea necesario
+  ]
+
+main :: IO ()
+main = do
+  runTestTT (TestList [testScore, testFizzBuzz])
+  return ()
