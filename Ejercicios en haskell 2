@@ -1,0 +1,5 @@
+-- | Esta función simula una calculadora científica que permite calcular
+--   el seno, coseno, tangente, exponencial y logaritmo neperiano. La función
+--   solicita al usuario el valor y la función a aplicar, y muestra por pantalla
+--   una tabla con los enteros del 1 al valor introducido y el resultado de aplicar
+--   la función a esos enteros.
