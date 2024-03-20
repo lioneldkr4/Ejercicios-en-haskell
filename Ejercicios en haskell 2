@@ -1,5 +1,140 @@
--- | Esta función simula una calculadora científica que permite calcular
---   el seno, coseno, tangente, exponencial y logaritmo neperiano. La función
---   solicita al usuario el valor y la función a aplicar, y muestra por pantalla
---   una tabla con los enteros del 1 al valor introducido y el resultado de aplicar
---   la función a esos enteros.
+-- | Desarrollar una función que simule una calculadora científica 
+-- que permita calcular el seno, coseno, tangente, exponencial y logaritmo neperiano. 
+-- La función preguntará al usuario el valor y la función a aplicar, y mostrará por 
+-- pantalla una tabla con los enteros de 1 al valor introducido y el resultado de aplicar la función a esos enteros.
+
+import Text.Printf
+
+calculate :: Double -> String -> [Double]
+calculate value "seno" = [sin x | x <- [1..value]]
+calculate value "coseno" = [cos x | x <- [1..value]]
+calculate value "tangente" = [tan x | x <- [1..value]]
+calculate value "exponencial" = [exp x | x <- [1..value]]
+calculate value "logaritmo" = [log x | x <- [1..value]]
+calculate _ _ = []
+
+main :: IO ()
+main = do
+    putStrLn "Ingrese el valor:"
+    valueStr <- getLine
+    let value = read valueStr :: Double
+    putStrLn "Ingrese la función (seno, coseno, tangente, exponencial, logaritmo):"
+    func <- getLine
+    let result = calculate value func
+    putStrLn "Enteros\t\tResultado"
+    mapM_ (\(i, r) -> printf "%d\t\t%.4f\n" i r) $ zip [1..] result
+
+
+
+-- | Desarrollar una función que reciba otra función booleana y una lista, 
+-- y devuelva otra lista con los elementos de la lista que devuelvan True al aplicarles la función booleana.
+
+filterFunction :: (a -> Bool) -> [a] -> [a]
+filterFunction _ [] = []
+filterFunction f (x:xs)
+    | f x       = x : filterFunction f xs
+    | otherwise = filterFunction f xs
+
+main :: IO ()
+main = do
+    putStrLn "Ingrese una lista (separada por comas):"
+    inputList <- getLine
+    let input = read inputList :: [Int]
+    
+    putStrLn "Ingrese la función booleana (por ejemplo, (>) 5 para números mayores que 5):"
+    functionStr <- getLine
+    let function = read functionStr :: (Int -> Bool)
+    
+    let result = filterFunction function input
+    print result
+
+
+-- | Escribir una función reciba una lista de calificaciones y devuelva la lista de calificaciones correspondientes a esas notas. 
+
+mapGrades :: [Int] -> [String]
+mapGrades [] = []
+mapGrades (x:xs)
+    | x >= 95   = "Excelente" : mapGrades xs
+    | x >= 85   = "Notable" : mapGrades xs
+    | x >= 75   = "Bueno" : mapGrades xs
+    | x >= 70   = "Suficiente" : mapGrades xs
+    | otherwise = "Desempeño insuficiente" : mapGrades xs
+
+main :: IO ()
+main = do
+    putStrLn "Ingrese una lista de calificaciones (separadas por comas):"
+    inputList <- getLine
+    let grades = read inputList :: [Int]
+    let result = mapGrades grades
+    print result
+
+
+-- | Escribir una función reciba un diccionario con las asignaturas y las notas de un alumno y 
+-- devuelva otro diccionario con las asignaturas en mayúsculas y las calificaciones correspondientes a las notas aprobadas. 
+-- 95-100(excelente), 85-94(Notable), 75-84(Bueno), 70-74(Suficiente)  <70(Desempeño insuficiente). 
+
+type Subject = String
+type Grade = Int
+type Notes = [(Subject, Grade)]
+type ApprovedNotes = [(Subject, String)]
+
+convertGrades :: Notes -> ApprovedNotes
+convertGrades [] = []
+convertGrades ((subject, grade):xs)
+    | grade >= 95   = (subject, "Excelente") : convertGrades xs
+    | grade >= 85   = (subject, "Notable") : convertGrades xs
+    | grade >= 75   = (subject, "Bueno") : convertGrades xs
+    | grade >= 70   = (subject, "Suficiente") : convertGrades xs
+    | otherwise     = (subject, "Desempeño insuficiente") : convertGrades xs
+
+main :: IO ()
+main = do
+    putStrLn "Ingrese el diccionario de asignaturas y notas (en formato [(asignatura, nota)]):"
+    inputDict <- getLine
+    let notes = read inputDict :: Notes
+    let result = convertGrades notes
+    print result
+
+
+-- | Una inmobiliaria de una ciudad maneja una lista de inmuebles como la siguiente:
+--[{'año': 2000, 'metros': 100, 'habitaciones': 3, 'garaje': True, 'zona': 'A'},
+--{'año': 2012, 'metros': 60, 'habitaciones': 2, 'garaje': True, 'zona': 'B'},
+--{'año': 1980, 'metros': 120, 'habitaciones': 4, 'garaje': False, 'zona': 'A'},
+--{'año': 2005, 'metros': 75, 'habitaciones': 3, 'garaje': True, 'zona': 'B'},
+--{'año': 2015, 'metros': 90, 'habitaciones': 2, 'garaje': False, 'zona': 'A'}]
+--Construir una función que permita hacer búsqueda de inmuebles en función de un presupuesto dado. 
+--La función recibirá como entrada la lista de inmuebles y un precio, y devolverá otra lista con los inmuebles 
+--cuyo precio sea menor o igual que el dado. Los inmuebles de la lista que se devuelva deben incorporar un nuevo 
+--par a cada diccionario con el precio del inmueble, donde el precio de un inmueble se calcula con las siguiente fórmula en función de la zona:
+--Zona A: precio = (metros * 1000 + habitaciones * 5000 + garaje * 15000) * (1-antiguedad/100)
+--Zona B: precio = (metros * 1000 + habitaciones * 5000 + garaje * 15000) * (1-antiguedad/100) * 1.5
+
+data Property = Property
+    { year :: Int
+    , squareMeters :: Int
+    , rooms :: Int
+    , garage :: Bool
+    , area :: Char
+    } deriving (Show)
+
+calculatePrice :: Property -> Double
+calculatePrice property
+    | area property == 'A' = fromIntegral ((squareMeters property * 1000) + (rooms property * 5000) + (if garage property then 15000 else 0)) * (1 - fromIntegral (2024 - year property) / 100)
+    | area property == 'B' = fromIntegral ((squareMeters property * 1000) + (rooms property * 5000) + (if garage property then 15000 else 0)) * (1 - fromIntegral (2024 - year property) / 100) * 1.5
+
+searchProperties :: [Property] -> Int -> [Property]
+searchProperties properties budget = [p | p <- properties, calculatePrice p <= fromIntegral budget]
+
+main :: IO ()
+main = do
+    let properties = [ Property 2000 100 3 True 'A'
+                     , Property 2012 60 2 True 'B'
+                     , Property 1980 120 4 False 'A'
+                     , Property 2005 75 3 True 'B'
+                     , Property 2015 90 2 False 'A'
+                     ]
+    putStrLn "Ingrese el presupuesto:"
+    budgetStr <- getLine
+    let budget = read budgetStr :: Int
+    let result = searchProperties properties budget
+    print result
