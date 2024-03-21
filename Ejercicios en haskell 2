@@ -50,6 +50,7 @@ main = do
 
 
 -- | Escribir una función reciba una lista de calificaciones y devuelva la lista de calificaciones correspondientes a esas notas. 
+-- 95-100(excelente), 85-94(Notable), 75-84(Bueno), 70-74(Suficiente)  <70(Desempeño insuficiente). 
 
 mapGrades :: [Int] -> [String]
 mapGrades [] = []
