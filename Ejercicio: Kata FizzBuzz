@@ -1,0 +1,58 @@
+-- Definición de la función fizzBuzz que toma un entero y devuelve una cadena
+fizzBuzz :: Int -> String
+-- Patrones para los casos específicos
+fizzBuzz n
+    -- Si n es divisible por 3 y por 5
+    | n `mod` 3 == 0 && n `mod` 5 == 0 = "FizzBuzz!"
+    -- Si n es divisible por 3 solamente
+    | n `mod` 3 == 0 = "Buzz!"
+    -- Si n es divisible por 5 solamente
+    | n `mod` 5 == 0 = "Fizz!"
+    -- Si no cumple con ninguno de los casos anteriores
+    | otherwise = numberToWords n
+    -- Definición de la función auxiliar numberToWords que convierte números a palabras
+    where
+        numberToWords :: Int -> String
+        -- Casos base para números del 0 al 20
+        numberToWords n'
+            | n' == 0 = "Zero"
+            | n' == 1 = "One"
+            | n' == 2 = "Two"
+            | n' == 3 = "Three"
+            | n' == 4 = "Four"
+            | n' == 5 = "Five"
+            | n' == 6 = "Six"
+            | n' == 7 = "Seven"
+            | n' == 8 = "Eight"
+            | n' == 9 = "Nine"
+            | n' == 10 = "Ten"
+            | n' == 11 = "Eleven"
+            | n' == 12 = "Twelve"
+            | n' == 13 = "Thirteen"
+            | n' == 14 = "Fourteen"
+            | n' == 15 = "Fifteen"
+            | n' == 16 = "Sixteen"
+            | n' == 17 = "Seventeen"
+            | n' == 18 = "Eighteen"
+            | n' == 19 = "Nineteen"
+            | n' == 20 = "Twenty"
+            -- Casos para múltiplos de 10 hasta 90
+            | n' == 30 = "Thirty"
+            | n' == 40 = "Forty"
+            | n' == 50 = "Fifty"
+            | n' == 60 = "Sixty"
+            | n' == 70 = "Seventy"
+            | n' == 80 = "Eighty"
+            | n' == 90 = "Ninety"
+            -- Caso para números menores que 100
+            | n' < 100 = let tens = numberToWords (n' `div` 10 * 10) -- Calcular las decenas
+                             ones = numberToWords (n' `mod` 10)        -- Calcular las unidades
+                         in tens ++ " " ++ ones                       -- Unir las decenas y unidades con un espacio
+            -- Caso para múltiplos de 100
+            | n' `mod` 100 == 0 = numberToWords (n' `div` 100) ++ " Hundred" -- Calcular los cientos
+            -- Caso para números menores que 1000
+            | n' < 1000 = let hundreds = numberToWords (n' `div` 100)   -- Calcular los cientos
+                              rest = numberToWords (n' `mod` 100)        -- Calcular el resto
+                          in hundreds ++ " Hundred " ++ rest             -- Unir cientos y resto con espacio
+            -- Caso para números fuera de rango
+            | otherwise = "Number out of range"
